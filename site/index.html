@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Azur Lane Story Reader</title>
+<meta name="description" content="An unofficial fan reader for Azur Lane's event stories, built with Claude, Anthropic's AI model.">
+<meta name="generator" content="Built with Claude (Anthropic)">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0b1019">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Shippori+Mincho+B1:wght@600;800&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-view="library">
+
+<!-- ================= library ================= -->
+<main class="lib" id="library">
+  <header class="lib-head">
+    <div>
+      <span class="kick mono">Unofficial fan reader</span>
+      <h1 id="siteTitle">Azur Lane Story Reader</h1>
+      <p class="made"><b>Made with AI.</b> <span>This site was built by Claude, Anthropic's AI model.</span>
+        <button class="linkish" id="aboutBtn" type="button">How this was made</button></p>
+    </div>
+    <div class="lib-tools">
+      <button class="ghost" id="syncBtn" type="button"><span class="dot" id="syncDot"></span><span id="syncLbl">Sync</span></button>
+    </div>
+  </header>
+  <div class="filters" id="filters" role="group" aria-label="Filter stories" hidden></div>
+  <section class="grid" id="grid" aria-label="Stories"></section>
+  <footer class="foot">
+    Story text, art and music belong to Manjuu, Yongshi and Yostar. Not affiliated with them; a non-commercial fan project.
+    Data from <a href="https://github.com/AzurLaneTools/AzurLaneData" target="_blank" rel="noopener">AzurLaneData</a>
+    and <a href="https://github.com/Fernando2603/AzurAssets" target="_blank" rel="noopener">AzurAssets</a>.
+    <span id="repoLink"></span>
+  </footer>
+</main>
+
+<!-- ================= event home ================= -->
+<div class="cover" id="cover" aria-hidden="true" hidden><img id="coverImg" alt=""></div>
+<div class="feature" id="feature" aria-hidden="true" hidden><div class="ffig" id="ffig"><img class="paint" id="fpaint" alt=""><img id="fface" alt="" hidden></div></div>
+<main class="home" id="home" hidden>
+  <section class="hero">
+    <a class="backlink mono" id="toLibrary" href="#/">← All stories</a>
+    <span class="kick mono" id="evKind">Event story</span>
+    <h1 id="evTitle"></h1>
+    <div class="rule"></div>
+    <p class="meta mono" id="evMeta"></p>
+    <div class="acts">
+      <button class="primary" id="startBtn"><span id="startLbl">Start reading</span><small id="startSub"></small></button>
+      <button class="ghost" id="homeEpub">Export EPUB</button>
+    </div>
+    <p class="note">Music and sound effects play while you read. Turn them off from the menu in the story view.</p>
+  </section>
+  <section class="chapters" aria-label="Chapters"><ol id="chList"></ol></section>
+  <footer class="foot">
+    Unofficial fan reader, built with Claude (Anthropic's AI model). Scenes are assembled automatically from the game's files and may differ from the game in places.
+    Story text, art and music belong to Manjuu, Yongshi and Yostar.
+  </footer>
+</main>
+
+<!-- ================= reader ================= -->
+<div class="reader" id="reader" hidden>
+  <section class="stage" id="stage" aria-label="Story" tabindex="-1">
+    <img class="bg" id="bgA" alt="">
+    <img class="bg" id="bgB" alt="">
+    <div id="figs"></div>
+    <div class="fog" id="fog"></div>
+    <div class="flash" id="flash"></div>
+    <div class="choices" id="choices" hidden></div>
+    <div class="dlg" id="dlg">
+      <div class="port" id="port" hidden></div>
+      <div class="who" id="who" hidden></div>
+      <p class="txt" id="txt" aria-live="polite"></p>
+      <span class="pos mono" id="pos"></span>
+      <span class="more" id="more" aria-hidden="true">▾</span>
+    </div>
+    <div class="card" id="card" hidden></div>
+    <div class="end" id="end" hidden></div>
+  </section>
+  <section class="script" id="script" hidden aria-label="Script"><div class="wrap" id="scriptWrap"></div></section>
+  <header class="bar">
+    <button class="tb icon" id="homeBtn" aria-label="Back to chapters" title="Back to chapters (Esc)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 3 5 8l5 5"/></svg>
+    </button>
+    <span class="chl mono" id="chLabel"></span>
+    <button class="tb" id="logBtn" title="Backlog (L)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lbl">Log</span></button>
+    <button class="tb" id="autoBtn" aria-pressed="false" title="Advance automatically (A)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 3.5v9l7-4.5z"/></svg><span class="lbl">Auto</span></button>
+    <button class="tb" id="menuBtn" title="Menu"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="3.5" cy="8" r=".9"/><circle cx="8" cy="8" r=".9"/><circle cx="12.5" cy="8" r=".9"/></svg><span class="lbl">Menu</span></button>
+  </header>
+  <aside class="sheet" id="logSheet" hidden aria-label="Backlog">
+    <header><h4>Log</h4><span class="mono" style="color:var(--muted)">Tap a line to return to it</span>
+      <button class="tb icon" id="logClose" aria-label="Close log"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
+    <div class="list" id="logList"></div>
+  </aside>
+  <div class="menu" id="menu" hidden role="dialog" aria-label="Menu">
+    <h4>Menu</h4>
+    <div class="sw"><span>Music</span><button id="musicSw" aria-pressed="true">On</button></div>
+    <div class="sw"><span>Sound effects</span><button id="sfxSw" aria-pressed="true">On</button></div>
+    <div class="field"><span class="mono">Reading style</span>
+      <div class="seg" role="group" aria-label="Reading style" id="styleSeg"><button data-v="story">Story</button><button data-v="script">Script</button></div></div>
+    <div class="field"><span class="mono">Text speed</span>
+      <div class="seg" role="group" aria-label="Text speed" id="speedSeg"><button data-v="normal">Normal</button><button data-v="fast">Fast</button><button data-v="instant">Instant</button></div></div>
+    <label class="field"><span class="mono">Commander name</span><input type="text" id="nameIn" maxlength="24" autocomplete="off"></label>
+    <div class="acts2"><button id="fsBtn">Full screen</button><button id="menuEpub">Export EPUB</button><button id="menuSync">Sync</button></div>
+    <p class="note">→ or Space: next line · ←: back · L: log · A: auto · Esc: chapters.</p>
+    <p class="note">Made with AI: this reader was built by Claude, Anthropic's AI model.</p>
+    <div class="acts2"><button class="danger" id="resetBtn">Reset this story's progress</button></div>
+  </div>
+</div>
+
+<!-- ================= dialogs ================= -->
+<div class="dialog" id="aboutDlg" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="box">
+    <button class="tb icon x" data-close aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    <h3 id="aboutTitle">How this was made</h3>
+    <p>This site was built with <b>Claude</b>, an AI model made by Anthropic. Claude wrote the reader, the design, and the pipeline
+      that turns the game's files into scenes, including placing each character's expressions on their art. The site's
+      maintainer directed the work and reviews each story before it's published.</p>
+    <p>Scenes are assembled automatically, so a few may differ from the game: a character slightly out of place, or an effect
+      that isn't shown. <span id="reportLine"></span></p>
+    <h4>Credits</h4>
+    <p>Azur Lane's story text, art and music belong to Manjuu, Yongshi and Yostar. This is a non-commercial fan project and isn't
+      affiliated with them. The game data comes from two community projects,
+      <a href="https://github.com/AzurLaneTools/AzurLaneData" target="_blank" rel="noopener">AzurLaneData</a> and
+      <a href="https://github.com/Fernando2603/AzurAssets" target="_blank" rel="noopener">AzurAssets</a>.</p>
+  </div>
+</div>
+<div class="dialog" id="syncDlg" hidden role="dialog" aria-modal="true" aria-labelledby="syncTitle">
+  <div class="box">
+    <button class="tb icon x" data-close aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    <h3 id="syncTitle">Sync your progress</h3>
+    <div id="syncBody" style="display:grid;gap:14px"></div>
+    <div class="hr"></div>
+    <h4>Backup file</h4>
+    <p>Save your progress as a file, or restore it on any device. Restoring merges with what's here.</p>
+    <div class="row2"><button id="backupBtn" type="button">Download backup</button><button id="restoreBtn" type="button">Restore from file</button>
+      <input type="file" id="restoreIn" accept="application/json,.json" hidden></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<script src="sync-core.js"></script>
+<script src="app.js" defer></script>
+</body>
+</html>

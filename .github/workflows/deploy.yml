@@ -1,0 +1,69 @@
+# Publishes site/ to GitHub Pages. Runs when the site changes, after "Add or update a story", or by hand.
+# Optional: with the ASSET_BASE variable set, art and music are uploaded to Cloudflare R2 and served from there.
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', '.github/workflows/deploy.yml']
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}   # the branch tip, so a story committed moments ago is included
+
+      - name: Upload art and music to R2
+        if: vars.ASSET_BASE != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          BUCKET: ${{ vars.R2_BUCKET }}
+        run: |
+          aws s3 sync site/assets "s3://$BUCKET" --endpoint-url "https://$ACCOUNT.r2.cloudflarestorage.com" \
+            --size-only --no-progress --cache-control "public, max-age=86400"
+
+      - name: Write site settings
+        env:
+          SYNC_API: ${{ vars.SYNC_API }}
+          ASSET_BASE: ${{ vars.ASSET_BASE }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          path = "site/config.json"
+          cfg = json.load(open(path))
+          cfg["repoUrl"] = os.environ["REPO_URL"]
+          if os.environ["SYNC_API"]:
+              cfg["syncApi"] = os.environ["SYNC_API"].rstrip("/")
+          if os.environ["ASSET_BASE"]:
+              cfg["assetBase"] = os.environ["ASSET_BASE"].rstrip("/") + "/"
+          json.dump(cfg, open(path, "w"), indent=2)
+          print(cfg)
+          PY
+          if [ -n "$ASSET_BASE" ]; then rm -rf site/assets; fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: pages
+        uses: actions/deploy-pages@v4

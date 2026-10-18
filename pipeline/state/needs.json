@@ -1,0 +1,289 @@
+{
+ "148": {
+  "bg": [
+   "bg_map_tianchen2",
+   "bg_map_tiancheng",
+   "bg_story_tiancheng1",
+   "bg_story_tiancheng2",
+   "bg_story_tiancheng3",
+   "bg_story_tiancheng4",
+   "bg_story_tiancheng5",
+   "bg_story_tiancheng6",
+   "bg_story_tiancheng7"
+  ],
+  "bgm": [
+   "battle-2",
+   "battle-boss-tiancheng",
+   "nagato-map",
+   "story-6",
+   "story-tiancheng",
+   "theme"
+  ],
+  "faces": {
+   "jiahezhanlie": [
+    "1",
+    "2",
+    "3"
+   ],
+   "nake": [
+    "1",
+    "2",
+    "3"
+   ],
+   "qifeng": [
+    "1",
+    "2",
+    "3"
+   ],
+   "tiancheng": [
+    "1",
+    "2",
+    "3"
+   ],
+   "zubing": [
+    "4"
+   ]
+  },
+  "paint": [
+   "canglong",
+   "changmen",
+   "chicheng",
+   "feilong",
+   "fengxiang",
+   "jiahe",
+   "jiahezhanlie",
+   "luao",
+   "nake",
+   "qifeng",
+   "tiancheng",
+   "unknown1",
+   "zubing"
+  ],
+  "se": [
+   "battle-boom2",
+   "battle-plane"
+  ]
+ },
+ "312": {
+  "bg": [
+   "bg_canghongzhiyan_1",
+   "bg_canghongzhiyan_cg8",
+   "bg_cccpv2_3",
+   "bg_cccpv2_9",
+   "bg_daofeng_4",
+   "bg_port_chongdong",
+   "bg_story_task",
+   "star_level_bg_1104",
+   "star_level_bg_145",
+   "star_level_bg_147",
+   "star_level_bg_169",
+   "star_level_bg_503",
+   "star_level_bg_504",
+   "star_level_bg_589",
+   "star_level_bg_593",
+   "star_level_bg_594",
+   "star_level_bg_595",
+   "star_level_bg_597"
+  ],
+  "bgm": [
+   "battle-eagleunion",
+   "battle-newwind",
+   "beverly_short_inst",
+   "bsm-2",
+   "map-longgong",
+   "story-amagi-up",
+   "story-antix-past",
+   "story-ironblood-strong",
+   "theme-akagi-meta",
+   "theme-nagato-meta",
+   "theme-partydress",
+   "theme-themagiciani"
+  ],
+  "faces": {
+   "ankeleiqi": [
+    "2",
+    "3",
+    "4"
+   ],
+   "changmen_alter": [
+    "2",
+    "3",
+    "5",
+    "6"
+   ],
+   "chicheng": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "chicheng_alter": [
+    "1",
+    "2"
+   ],
+   "dashan": [
+    "2",
+    "6"
+   ],
+   "dulianglai": [
+    "1"
+   ],
+   "fengxiang_alter": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "hailunna": [
+    "3"
+   ],
+   "hailunna_alter": [
+    "1",
+    "2"
+   ],
+   "jiahe": [
+    "3",
+    "4"
+   ],
+   "kelaimengsuo": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "kelei": [
+    "7"
+   ],
+   "liekexingdun": [
+    "3"
+   ],
+   "lituoliao": [
+    "1",
+    "3",
+    "6",
+    "8"
+   ],
+   "longfeng": [
+    "1"
+   ],
+   "madamm": [
+    "4",
+    "5"
+   ],
+   "mengfeisi": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "mengfeisi_alter": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "midchicheng_alter": [
+    "1",
+    "4",
+    "5"
+   ],
+   "moon": [
+    "4"
+   ],
+   "qiaozhiwushi": [
+    "1"
+   ],
+   "qifeng_alter": [
+    "5",
+    "8"
+   ],
+   "silverfox": [
+    "3",
+    "7"
+   ],
+   "siwanshi": [
+    "2"
+   ],
+   "tiancheng_cv": [
+    "1",
+    "2"
+   ],
+   "xinnong": [
+    "1",
+    "3",
+    "5"
+   ],
+   "xinzexi": [
+    "1",
+    "5"
+   ],
+   "xipeierhaijunshangjiang_alter": [
+    "1",
+    "4",
+    "5"
+   ],
+   "yuekecheng_alter": [
+    "2",
+    "3",
+    "4",
+    "6",
+    "7"
+   ],
+   "yunxian": [
+    "2"
+   ]
+  },
+  "paint": [
+   "anjie",
+   "ankeleiqi",
+   "changmen_alter",
+   "chicheng",
+   "chicheng_alter",
+   "daofeng",
+   "dashan",
+   "dulianglai",
+   "empress",
+   "fengxiang_alter",
+   "hailunna",
+   "hailunna_alter",
+   "jiahe",
+   "kelaimengsuo",
+   "kelei",
+   "liekexingdun",
+   "linghangyuan1_1",
+   "lituoliao",
+   "longfeng",
+   "madamm",
+   "mengfeisi",
+   "mengfeisi_alter",
+   "midchicheng_alter",
+   "moon",
+   "qiaozhiwushi",
+   "qifeng_alter",
+   "ruihe",
+   "silverfox",
+   "siwanshi",
+   "tiancheng",
+   "tiancheng_cv",
+   "tierbici",
+   "unknown2",
+   "unknown4",
+   "xinnong",
+   "xinzexi",
+   "xipeierhaijunshangjiang_alter",
+   "yichui_2",
+   "yuekecheng_alter",
+   "yuekecheng_alter_hei",
+   "yunxian"
+  ],
+  "se": [
+   "battle-boom2",
+   "ui-fengling",
+   "ui-jingbaodi",
+   "ui-xipai"
+  ]
+ }
+}

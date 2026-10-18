@@ -1,0 +1,14 @@
+# Cloudflare Worker for cross-device sync. Deployed by .github/workflows/sync-worker.yml,
+# which fills in the two placeholders below from the repository's variables.
+name = "alsr-sync"
+main = "src/index.mjs"
+compatibility_date = "2025-06-01"
+
+[vars]
+# The site's address, e.g. "https://your-name.github.io" (comma-separate several)
+ALLOWED_ORIGINS = "__ALLOWED_ORIGINS__"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "alsr-sync"
+database_id = "__D1_DATABASE_ID__"

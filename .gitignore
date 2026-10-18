@@ -1,0 +1,8 @@
+# local working files (downloads and extracted game data)
+cache/
+__pycache__/
+*.pyc
+node_modules/
+.wrangler/
+.dev.vars
+tools/out/
