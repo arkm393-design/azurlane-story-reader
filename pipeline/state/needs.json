@@ -1,12 +1,12 @@
 {
  "1": {
   "bg": [
-   "bg_map_northsea",
+   "bg_memory",
    "bg_story_1",
+   "bg_story_1_sub",
    "bg_story_3"
   ],
   "bgm": [
-   "battle-1",
    "story-5"
   ],
   "faces": {

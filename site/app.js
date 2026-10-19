@@ -75,7 +75,8 @@ function effectsAt(L, i) {
   const on = {};
   for (let j = 0; j <= i; j++) for (const [n, a] of L[j].fx || []) on[n] = a;
   const act = Object.keys(on).filter(n => on[n]);
-  return { fog: act.some(n => /fog|miwu/i.test(n) && !/dark/i.test(n)), dark: act.some(n => /miwu.*dark|fog.*dark/i.test(n)) };
+  return { fog: act.some(n => /fog|miwu/i.test(n) && !/dark/i.test(n)), dark: act.some(n => /miwu.*dark|fog.*dark/i.test(n)),
+    sparks: act.some(n => /huohua|spark|ember/i.test(n)) };   // huohua: the game's drifting sparks over fire
 }
 function counts(L, i, choices) { let n = 0, at = 0; for (let j = 0; j < L.length; j++) if (visible(L, j, choices)) { n++; if (j <= i) at++; } return [at, n]; }
 
@@ -121,6 +122,18 @@ function setBg(name) {
   if (nx.complete && nx.naturalWidth) nx.onload();
 }
 
+// A cut-in panel over the background, for the line that calls for it (the game's subBgName).
+let ovShown = null;
+function setOverlay(name) {
+  const ov = $('ov'), src = name && url.bg(name);
+  if ((src || null) === ovShown) return;
+  ovShown = src || null;
+  if (!src) { ov.classList.remove('on'); return; }
+  ov.onload = () => { ov.style.width = Math.min(100, ov.naturalWidth / 1280 * 100) + '%'; ov.classList.add('on'); };
+  ov.classList.remove('on'); ov.src = src;
+  if (ov.complete && ov.naturalWidth) ov.onload();
+}
+
 // Figures: a centre slot, plus left and right slots for the two-person staging older events use.
 // What stands where is replayed from the start of the chapter, so Back, the log and jumps stay right.
 const SLOTS = {};
@@ -140,7 +153,7 @@ function staging(L, i, choices) {
     const vis = visible(L, j, choices);
     if (l.bg && (vis || l.k === 'fx')) { if (bg !== undefined && l.bg !== bg) st.L = st.R = st.C = null; bg = l.bg; }
     if (!vis) continue;
-    if (l.k === 'card') { st.L = st.R = st.C = null; st.lit = new Set(); continue; }
+    if (l.k === 'card' || l.cin) { st.L = st.R = st.C = null; st.lit = new Set(); continue; }   // cin: scene art alone
     const lit = new Set();
     const art = hasArt(l.a) ? { a: l.a, e: l.e, flip: !!l.flip } : null;
     const commander = !l.a && l.w === '{playername}';
@@ -259,6 +272,7 @@ function showFigure(l) {
   }
 }
 function showPortrait(l) {
+  if (l.cin) { $('port').hidden = true; $('dlg').classList.remove('hasport'); return; }
   const p = l.a ? actorPaint(l.a) : null, meta = p && AS.paint[p];
   const port = $('port');
   const css = meta && meta.po ? avatarCss(p, l.e && meta.po.e.includes(l.e) ? l.e : meta.po.e[0]) : null;
@@ -362,10 +376,11 @@ function show(i, { flash = false } = {}) {
   const L = lines(); cur.i = i;
   const l = L[i];
   const sc = sceneAt(L, i);
-  stage.classList.toggle('black', !!l.black || !sc.bg);
+  stage.classList.toggle('black', !!(l.black && !l.bg) || !sc.bg);
   stage.classList.toggle('old', !!l.old);
   const fx = effectsAt(L, i);
-  stage.classList.toggle('fx-fog', fx.fog); stage.classList.toggle('fx-fogdark', fx.dark);
+  stage.classList.toggle('fx-fog', fx.fog); stage.classList.toggle('fx-fogdark', fx.dark); stage.classList.toggle('fx-sparks', fx.sparks);
+  setOverlay(l.ov);
   setBg(sc.bg);
   setMusic(sc.bgm);
   playSe(l.se);
@@ -378,9 +393,9 @@ function show(i, { flash = false } = {}) {
     renderCard(l);
   } else {
     $('card').hidden = true; $('dlg').hidden = false;
-    const name = nameOf(l), who = $('who');
+    const name = l.cin ? null : nameOf(l), who = $('who');
     who.hidden = !name; who.textContent = name || ''; who.style.color = nameColor(l) || '';
-    $('dlg').classList.toggle('narr', !name && !l.anon);
+    $('dlg').classList.toggle('narr', !name && !l.anon && !l.cin);
     const d = $('dlg'); d.classList.remove('shake'); if (l.shake) { void d.offsetWidth; d.classList.add('shake'); }
     showFigure(l); showPortrait(l);
     $('more').hidden = true;

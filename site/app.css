@@ -90,6 +90,26 @@ button { cursor: pointer; }
 .stage .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s ease; }
 .stage .bg.on { opacity: 1; }
 .stage.black .bg { opacity: 0 !important; }
+/* cut-in panel over the background (transparent art), centred, sliding in */
+.stage .ov { position: absolute; z-index: 0; left: 50%; top: 46%; max-width: none; height: auto; opacity: 0; pointer-events: none;
+  translate: -50% -50%; transition: opacity .35s ease, translate .5s cubic-bezier(.2,.7,.2,1); }
+.stage .ov:not(.on) { translate: -56% -50%; }
+.stage .ov.on { opacity: 1; }
+.stage.black .ov { opacity: 0; }
+/* drifting sparks over a fire (the game's huohua effect), two layers of glowing specks rising */
+.sparks { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity 1s ease; }
+.stage.fx-sparks .sparks { opacity: 1; }
+.sparks i { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + 420px); mix-blend-mode: screen;
+  background-image:
+    radial-gradient(2.5px 2.5px at 12% 18%, #ffd08a, transparent), radial-gradient(2px 2px at 34% 64%, #ff9a4a, transparent),
+    radial-gradient(3px 3px at 58% 32%, #ffb866, transparent), radial-gradient(1.8px 1.8px at 77% 81%, #ff8240, transparent),
+    radial-gradient(2.2px 2.2px at 91% 44%, #ffc47a, transparent), radial-gradient(1.6px 1.6px at 46% 92%, #ff7a3a, transparent);
+  background-size: 420px 420px; animation: sparks-rise 9s linear infinite; }
+.sparks i + i { background-size: 300px 300px; animation: sparks-rise-near 6s linear infinite; opacity: .75; filter: blur(.6px); }
+.sparks::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 90% 55% at 50% 105%, #ff6a1f33, transparent 70%); }
+@keyframes sparks-rise { from { transform: translate3d(0, 0, 0) } to { transform: translate3d(0, -420px, 0) } }
+@keyframes sparks-rise-near { from { transform: translate3d(0, 0, 0) } to { transform: translate3d(0, -300px, 0) } }
+@media (prefers-reduced-motion: reduce) { .sparks i { animation: none; } }
 .stage.old .bg, .stage.old .fig { filter: sepia(.55) saturate(.7) contrast(.95) brightness(.92); }
 .stage.old::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
   background: radial-gradient(ellipse at center, transparent 55%, #1a120688 100%); }

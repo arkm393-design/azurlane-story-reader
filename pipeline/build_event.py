@@ -5,9 +5,10 @@ usage: python3 -I build_event.py <AzurLaneData EN dir with *.json> <group_id> <o
 
 overrides.json (optional, per event): {"map_bg": {"<game map bg name>": "<AzurAssets bg name>"}}
 overrides "battle_scene": {"bg", "bgm"} backdrop + music for in-battle dialogue (story mode 2) with no background;
-  "story_scene": {"<story id>": {"bg", "bgm"}} the same for one story.
+  "story_scene": {"<story id>": {"bg", "bgm"}} the same for one story; "cover": "<bg name>".
 Chapters that open without a background are cutscenes over the battle map; they get
-their stage's map background (stage found via the game's stage and map tables).
+their stage's map background (stage found via the game's stage and map tables), or else
+bg_memory, the backdrop the game itself uses when replaying a scene from the Memories menu.
 
 Reads: story.json, memory_group.json, memory_template.json,
        ship_skin_template.json, ship_data_statistics.json, name_code.json
@@ -124,6 +125,10 @@ def scene(s, line):
     if bg:
         line["bg"] = bg.split("/")[-1].lower()
         need_bg.add(line["bg"])
+    if s.get("subBgName"):
+        # a cut-in panel (transparent art) laid over the background for this line
+        line["ov"] = s["subBgName"].split("/")[-1].lower()
+        need_bg.add(line["ov"])
     if s.get("bgm"):
         line["bgm"] = s["bgm"].lower()
         need_bgm.add(line["bgm"])
@@ -208,6 +213,7 @@ def chapter_map_bg(key, label):
     return None
 
 
+MEMORY_BG = "bg_memory"
 prev_bgm = None
 for mid in group["memories"]:
     mem = mems.get(mid)
@@ -220,6 +226,7 @@ for mid in group["memories"]:
     if isinstance(scripts, dict):
         scripts = list(scripts.values())
     lines = []
+    story_mode = story[key].get("mode")
     for s in scripts:
         if not isinstance(s, dict):
             continue
@@ -262,6 +269,8 @@ for mid in group["memories"]:
         if s.get("actorName"):
             who = resolve_codes(s["actorName"]).strip()
         line = {"k": "say", "w": who, "t": resolve_codes(say)}
+        if s.get("mode", story_mode) == 3:
+            line["cin"] = 1   # mode 3: text over the scene art alone, no characters or name tag
         if s.get("withoutActorName"):
             line["w"] = None
             line["anon"] = 1
@@ -306,7 +315,8 @@ for mid in group["memories"]:
         bscene = (OVR.get("story_scene") or {}).get(key.lower()) or {}
         if not bscene and story[key].get("mode") == 2:
             bscene = OVR.get("battle_scene") or {}
-        mbg = bscene.get("bg") or chapter_map_bg(key, chapter_label(cond))
+        # Otherwise the game's own backdrop for replaying a scene from the Memories menu.
+        mbg = bscene.get("bg") or chapter_map_bg(key, chapter_label(cond)) or MEMORY_BG
         if mbg:
             lines[0]["bg"] = mbg
             need_bg.add(mbg)
@@ -322,7 +332,7 @@ for mid in group["memories"]:
         "lines": lines,
     })
 
-generic = ("bg_story_task", "bg_story_room", "bg_story_school", "bg_port")
+generic = ("bg_story_task", "bg_story_room", "bg_story_school", "bg_port", MEMORY_BG)
 ranked = sorted(bg_use.items(), key=lambda kv: -kv[1])
 out["cover"] = next((b for b, _ in ranked if not b.startswith(generic)), ranked[0][0] if ranked else None)
 if OVR.get("cover"):   # overrides {"cover": "<bg name>"}: the art for the library card and story page

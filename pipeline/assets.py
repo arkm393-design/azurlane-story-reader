@@ -239,7 +239,10 @@ def process(need, src, out, manifest, log=print):
         local = dict(zip(fetch, pool.map(src.fetch, fetch.values())))
 
     for n in todo_bg:
-        im = Image.open(local[("bg", n)]).convert("RGB")
+        im = Image.open(local[("bg", n)])
+        # keep transparency for cut-in panels laid over a background; plain backgrounds go to RGB
+        alpha = im.getchannel("A").getextrema()[0] < 255 if im.mode in ("RGBA", "LA", "PA") else False
+        im = im.convert("RGBA" if alpha else "RGB")
         if im.width > 1600:
             im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
         _webp(im, os.path.join(out, "bg", f"{n}.webp"), 76)
