@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "find: search story titles · add · rebuild · remove"
+        description: "find: search story titles · add · rebuild · review: mark checked against the game · unreview · remove"
         type: choice
-        options: [find, add, rebuild, remove]
+        options: [find, add, rebuild, review, unreview, remove]
         default: find
       story:
-        description: "Story ID for add, rebuild or remove; words from the title for find"
+        description: "Story ID (words from the title for find)"
         required: true
       update:
         description: Fetch the latest game data and art first

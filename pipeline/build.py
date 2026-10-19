@@ -4,6 +4,8 @@
   python pipeline/build.py add <id>       build a story group and publish it in the library
   python pipeline/build.py rebuild <id>   rebuild a published group (story text and any art it lacks)
   python pipeline/build.py remove <id>    unpublish a group (its art stays in the library)
+  python pipeline/build.py review <id>    mark a story as checked against the game by a person
+  python pipeline/build.py unreview <id>  move a story back to "Awaiting human review"
   python pipeline/build.py refresh        rewrite site/data from pipeline/state (no downloads)
 
 Options: --update  fetch the latest game data and assets first.
@@ -142,6 +144,7 @@ def refresh():
             "bgm": {n: manifest["bgm"][n] for n in need["bgm"] if n in manifest["bgm"]},
             "se": {n: manifest["se"][n] for n in need.get("se", []) if n in manifest["se"]},
         }
+        story["reviewed"] = bool(item.get("reviewed"))
         write_json(os.path.join(SITE, "data", "events", f"{gid}.json"), story, compact=True)
         live.add(f"{gid}.json")
         lines = sum(1 for c in story["chapters"] for l in c["lines"] if l["k"] in ("say", "card") and not l.get("title"))
@@ -149,7 +152,7 @@ def refresh():
             "id": gid, "title": story["title"], "kind": story.get("kind", "other"),
             "chapters": len(story["chapters"]), "lines": lines,
             "cover": story["assets"]["bg"].get(story.get("cover") or ""),
-            "added": item.get("added"),
+            "added": item.get("added"), "reviewed": bool(item.get("reviewed")),
         })
     for f in os.listdir(os.path.join(SITE, "data", "events")):
         if f.endswith(".json") and f not in live:
@@ -179,6 +182,21 @@ def main(argv):
         return 2
     cmd = args[0]
     if cmd == "refresh":
+        refresh()
+        return 0
+    if cmd in ("review", "unreview") and len(args) == 2 and args[1].isdigit():
+        # New stories start out "Awaiting human review"; the maintainer marks them reviewed after
+        # comparing them with the game.
+        cfg = read_json(EVENTS_CFG, {"events": []})
+        hit = [e for e in cfg["events"] if e["id"] == int(args[1])]
+        if not hit:
+            print(f"{args[1]} is not published")
+            return 1
+        if cmd == "review":
+            hit[0]["reviewed"] = datetime.date.today().isoformat()
+        else:
+            hit[0].pop("reviewed", None)
+        write_json(EVENTS_CFG, cfg)
         refresh()
         return 0
     data_dir = sources(update)

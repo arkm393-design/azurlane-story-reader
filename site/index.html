@@ -30,6 +30,15 @@
   </header>
   <div class="filters" id="filters" role="group" aria-label="Filter stories" hidden></div>
   <section class="grid" id="grid" aria-label="Stories"></section>
+  <section class="pending" id="pending" hidden aria-labelledby="pendingTitle">
+    <div class="pending-head">
+      <span class="kick mono">Not yet checked against the game</span>
+      <h2 id="pendingTitle">Awaiting human review</h2>
+      <p>Claude assembled these stories from the game's files. Nobody has compared them with the game yet, so a scene may
+        be staged differently from the original. <span id="pendingReport"></span></p>
+    </div>
+    <div class="grid" id="pendingGrid"></div>
+  </section>
   <footer class="foot">
     Story text, art and music belong to Manjuu, Yongshi and Yostar. Not affiliated with them; a non-commercial fan project.
     Data from <a href="https://github.com/AzurLaneTools/AzurLaneData" target="_blank" rel="noopener">AzurLaneData</a>
@@ -48,6 +57,8 @@
     <h1 id="evTitle"></h1>
     <div class="rule"></div>
     <p class="meta mono" id="evMeta"></p>
+    <p class="review-note" id="reviewNote" hidden><b>Awaiting human review.</b> Assembled by Claude from the game's files
+      and not yet compared with the game by a person.</p>
     <div class="acts">
       <button class="primary" id="startBtn"><span id="startLbl">Start reading</span><small id="startSub"></small></button>
       <button class="ghost" id="homeEpub">Export EPUB</button>
@@ -118,7 +129,8 @@
     <h3 id="aboutTitle">How this was made</h3>
     <p>This site was built with <b>Claude</b>, an AI model made by Anthropic. Claude wrote the reader, the design, and the pipeline
       that turns the game's files into scenes, including placing each character's expressions on their art. The site's
-      maintainer directed the work and reviews each story before it's published.</p>
+      maintainer directed the work, and compares each story with the game. Stories nobody has checked yet are listed
+      separately, under Awaiting human review.</p>
     <p>Scenes are assembled automatically, so a few may differ from the game: a character slightly out of place, or an effect
       that isn't shown. <span id="reportLine"></span></p>
     <h4>Credits</h4>

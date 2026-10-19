@@ -2,7 +2,8 @@
 
 > **Made with AI.** This project was built with **Claude**, an AI model made by Anthropic. Claude wrote the reader,
 > its design, the sync service and the pipeline that turns the game's files into scenes. The maintainer directs the
-> work and reviews each story before it is published. The site, the reader and every exported EPUB say so too.
+> work and compares each story with the game; until then, a story is listed under **Awaiting human review**.
+> The site, the reader and every exported EPUB say so too.
 
 An unofficial, non-commercial fan reader for Azur Lane's event stories (EN server text). Pick a story from the
 library and read it the way the game presents it: backgrounds, characters with their expressions, music and sound
@@ -38,10 +39,13 @@ From the **Actions** tab, run **Add or update a story**:
    and their IDs; `*` marks ones already on the site.
 2. Action **add**, with the ID. The art is processed on GitHub's machines (a few minutes for a new story, faster
    when its characters are already in the library), the result is committed, and the site redeploys.
-3. Read it on the site. If something looks wrong, open an issue, fix it in `config/overrides/<id>.json` or the
-   pipeline, then run **rebuild** with the same ID. **remove** takes a story off the site.
+3. New stories appear under **Awaiting human review**. Compare the story with the game. If something looks wrong,
+   open an issue, fix it in `config/overrides/<id>.json` or the pipeline, then run **rebuild** with the same ID.
+4. When it matches the game, run **review** with the ID: the story moves into the regular categories.
+   **unreview** moves it back; **remove** takes a story off the site.
 
-The same commands work locally: `python3 pipeline/build.py list crimson`, `add 148`, `rebuild 148`, `remove 148`,
+The same commands work locally: `python3 pipeline/build.py list crimson`, `add 148`, `rebuild 148`, `review 148`,
+`unreview 148`, `remove 148`,
 `refresh` (regenerate `site/data` only). Add `--update` to fetch the latest game data first. Requires Python 3.11+,
 `pip install -r pipeline/requirements.txt`, git and ffmpeg.
 

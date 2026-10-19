@@ -536,31 +536,45 @@ function showLibrary() {
   setView('library');
   renderLibrary();
 }
+function cardHtml(ev, pending) {
+  const p = eventProgress(ev);
+  const stat = p.done >= ev.chapters ? '<span class="done">Finished</span>'
+    : p.done ? `Read ${p.done} of ${ev.chapters} chapters` : p.started ? 'In progress' : `${ev.chapters} chapters`;
+  const pct = Math.min(1, p.done / ev.chapters);
+  return `<button class="ev-card" type="button" data-id="${ev.id}">
+    ${ev.cover ? `<img src="${esc(A(ev.cover))}" alt="" loading="lazy">` : ''}
+    ${pending ? '<span class="tag mono">Unreviewed</span>' : ''}
+    <span class="in"><span class="kind mono">${esc(KIND_LABEL[ev.kind] || 'Story')}</span>
+    <h2>${esc(ev.title)}</h2><span class="stat mono">${stat}</span></span>
+    ${pct > 0 ? `<span class="meter" style="width:${(pct * 100).toFixed(1)}%"></span>` : ''}</button>`;
+}
+// Reviewed stories fill the regular categories; the rest wait in their own section until the maintainer
+// has compared them with the game.
 function renderLibrary() {
   const evs = [...CATALOG.events].sort((a, b) => a.id - b.id);   // the game numbers stories in release order
-  const kinds = KIND_ORDER.filter(k => evs.some(e => e.kind === k));
+  const done = evs.filter(e => e.reviewed), wait = evs.filter(e => !e.reviewed);
+  const kinds = KIND_ORDER.filter(k => done.some(e => e.kind === k));
+  const chips = [['all', 'All'], ...kinds.map(k => [k, KIND_PLURAL[k]]), ...(wait.length ? [['review', 'Awaiting human review']] : [])];
+  if (!chips.some(([k]) => k === filter)) filter = 'all';
   const fl = $('filters');
-  fl.hidden = kinds.length < 2;
+  fl.hidden = chips.length < 3;
   if (!fl.hidden) {
-    fl.innerHTML = [['all', 'All'], ...kinds.map(k => [k, KIND_PLURAL[k]])]
-      .map(([k, label]) => `<button type="button" data-k="${k}" aria-pressed="${filter === k}">${esc(label)}</button>`).join('');
+    fl.innerHTML = chips.map(([k, label]) => `<button type="button" data-k="${k}" aria-pressed="${filter === k}">${esc(label)}</button>`).join('');
   }
-  const shown = evs.filter(e => filter === 'all' || e.kind === filter);
   const grid = $('grid');
-  if (!CATALOG.events.length) { grid.innerHTML = `<p class="lib-empty">${CATALOG.error ? esc(CATALOG.error) : 'No stories are published yet.'}</p>`; return; }
-  grid.innerHTML = shown.map(ev => {
-    const p = eventProgress(ev);
-    const stat = p.done >= ev.chapters ? '<span class="done">Finished</span>'
-      : p.done ? `Read ${p.done} of ${ev.chapters} chapters` : p.started ? 'In progress' : `${ev.chapters} chapters`;
-    const pct = Math.min(1, p.done / ev.chapters);
-    return `<button class="ev-card" type="button" data-id="${ev.id}">
-      ${ev.cover ? `<img src="${esc(A(ev.cover))}" alt="" loading="lazy">` : ''}
-      <span class="in"><span class="kind mono">${esc(KIND_LABEL[ev.kind] || 'Story')}</span>
-      <h2>${esc(ev.title)}</h2><span class="stat mono">${stat}</span></span>
-      ${pct > 0 ? `<span class="meter" style="width:${(pct * 100).toFixed(1)}%"></span>` : ''}</button>`;
-  }).join('');
+  if (!evs.length) {
+    grid.hidden = false; $('pending').hidden = true;
+    grid.innerHTML = `<p class="lib-empty">${CATALOG.error ? esc(CATALOG.error) : 'No stories are published yet.'}</p>`;
+    return;
+  }
+  const showDone = filter === 'review' ? [] : done.filter(e => filter === 'all' || e.kind === filter);
+  const showWait = filter === 'all' || filter === 'review' ? wait : [];
+  grid.hidden = !showDone.length;
+  grid.innerHTML = showDone.map(ev => cardHtml(ev, false)).join('');
+  $('pending').hidden = !showWait.length;
+  $('pendingGrid').innerHTML = showWait.map(ev => cardHtml(ev, true)).join('');
 }
-$('grid').addEventListener('click', e => {
+$('library').addEventListener('click', e => {
   const c = e.target.closest('.ev-card'); if (!c) return;
   nav(`#/e/${c.dataset.id}`, { from: 'library' });
 });
@@ -594,6 +608,7 @@ function renderHome() {
   if (!EV) return;
   $('evTitle').textContent = EV.title;
   $('evKind').textContent = KIND_LABEL[EV.kind] || 'Story';
+  $('reviewNote').hidden = !!EV.reviewed;
   const total = EV.chapters.reduce((a, c) => a + c.lines.filter(l => l.k !== 'fx' && !l.title).length, 0);
   const days = EV.chapters.map((c, i) => dayLabel(c, i)).filter(d => d.startsWith('Day'));
   $('evMeta').textContent = [`${EV.chapters.length} chapters`, days.length ? `${days[0]} to ${days[days.length - 1]}` : '', `${total} lines`].filter(Boolean).join(' · ');
@@ -863,6 +878,7 @@ hr.scene:after{content:"⁂";font-size:1.1em}
   });
   zip.file('OEBPS/about.xhtml', xhtml('About this book', `<section epub:type="colophon" class="colophon"><h1>About this book</h1>
 <p>This book was compiled from the English text of the Azur Lane story "${X(EV.title)}" by ${X(CFG.title)}, an unofficial, non-commercial fan reader built with Claude, an AI model made by Anthropic.</p>
+${EV.reviewed ? '' : '<p>When this book was made, the story had not yet been compared with the game by a person.</p>'}
 <p>Azur Lane's story text belongs to Manjuu, Yongshi and Yostar. This book is not affiliated with them. Game data from the community projects AzurLaneData and AzurAssets.</p>
 ${location.protocol.startsWith('http') ? `<p>${X(location.origin + location.pathname)}</p>` : ''}</section>`));
   nav.push('<li><a href="about.xhtml">About this book</a></li>');
@@ -1097,6 +1113,7 @@ async function boot() {
   if (CFG.repoUrl) {
     $('repoLink').innerHTML = `Source and issues on <a href="${esc(CFG.repoUrl)}" target="_blank" rel="noopener">GitHub</a>.`;
     $('reportLine').innerHTML = `If you spot one, <a href="${esc(CFG.repoUrl)}/issues" target="_blank" rel="noopener">report it on GitHub</a>.`;
+    $('pendingReport').innerHTML = `If something looks off, <a href="${esc(CFG.repoUrl)}/issues" target="_blank" rel="noopener">report it on GitHub</a>.`;
   }
   try {
     const r = await fetch('data/catalog.json', { cache: 'no-cache' });

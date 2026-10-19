@@ -109,11 +109,15 @@ def run():
         cards = a.locator(".ev-card")
         catalog = json.load(open(os.path.join(SITE, "data/catalog.json")))["events"]
         check(cards.count() == len(catalog), f"library lists all {len(catalog)} stories")
-        ids = [int(cards.nth(i).get_attribute("data-id")) for i in range(cards.count())]
-        check(ids == sorted(ids), "stories are listed oldest first")
+        for sec in ("#grid", "#pendingGrid"):
+            ids = [int(x) for x in a.locator(f"{sec} .ev-card").evaluate_all("els => els.map(e => e.dataset.id)")]
+            check(ids == sorted(ids), f"{sec}: stories are listed oldest first")
         check(a.locator(".made").is_visible() and "Claude" in a.locator(".made").inner_text(), "AI disclosure is visible on the library")
-        kinds = {e["kind"] for e in catalog}
-        check(a.locator("#filters").is_hidden() == (len(kinds) < 2), "filter row shows only when stories differ in kind")
+        chips = len({e["kind"] for e in catalog if e.get("reviewed")}) + any(not e.get("reviewed") for e in catalog)
+        check(a.locator("#filters").is_hidden() == (chips < 2), "filter row shows only when there is more than one category")
+        waiting = [e for e in catalog if not e.get("reviewed")]
+        check(a.locator("#pending").is_visible() == bool(waiting)
+              and a.locator("#pendingGrid .ev-card").count() == len(waiting), "unreviewed stories wait in their own section")
         a.wait_for_timeout(500)
         a.screenshot(path=f"{OUT}/1-library.png")
         a.click("#aboutBtn")
@@ -125,6 +129,8 @@ def run():
         a.wait_for_selector("#chList li")
         check(a.url.endswith("#/e/148"), "story home has its own address")
         check(a.locator("#chList li").count() == 22, "Crimson Echoes home lists 22 chapters")
+        ce = next(e for e in catalog if e["id"] == 148)
+        check(a.locator("#reviewNote").is_visible() != bool(ce.get("reviewed")), "story page says whether it was reviewed")
         a.wait_for_timeout(600)
         a.screenshot(path=f"{OUT}/2-home.png")
 

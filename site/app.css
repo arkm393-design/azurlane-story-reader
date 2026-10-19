@@ -293,6 +293,19 @@ body[data-view="library"] { background: radial-gradient(ellipse 80% 50% at 70% 0
 .ev-card .stat .done { color: var(--ok); }
 .ev-card .meter { position: absolute; z-index: 1; left: 0; bottom: 0; height: 3px; background: var(--brass); }
 .lib-empty { padding: 40px 0; color: var(--muted); }
+/* stories nobody has compared with the game yet: their own section, set apart by dashed edges */
+.pending { display: grid; gap: 14px; padding-top: 22px; border-top: 1px dashed #ffffff33; }
+.pending:first-child, .grid[hidden] + .pending { border-top: 0; padding-top: 0; }
+.pending-head { display: grid; gap: 6px; max-width: 70ch; }
+.pending-head h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.2; }
+.pending-head p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.pending-head a { color: var(--brass); }
+.pending .ev-card { border-style: dashed; border-color: #ffffff38; }
+.pending .ev-card .tag { position: absolute; z-index: 1; top: 12px; right: 12px; padding: 3px 7px;
+  border: 1px dashed #ffffff55; background: #05080ecc; color: #c3cad6; font-size: 11px; }
+.review-note { margin: 0; max-width: 46ch; padding: 9px 12px; border: 1px dashed #ffffff40; background: #05080e99;
+  font-size: 14px; line-height: 1.45; color: #c9cfda; }
+.review-note b { color: var(--fg); font-weight: 600; }
 .backlink { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; }
 .backlink:hover { color: var(--brass); }
 
