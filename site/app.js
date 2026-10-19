@@ -6,7 +6,8 @@ const $ = id => document.getElementById(id);
 const DEFAULT_NAME_COLOR = '#A9F548';
 const SPEED = { normal: 48, fast: 140, instant: 0 };
 const KIND_LABEL = { major: 'Major event', minor: 'Minor event', festive: 'Festive event', character: 'Character story', main: 'Main story', other: 'Story' };
-const KIND_ORDER = ['major', 'minor', 'festive', 'character', 'main', 'other'];
+const KIND_ORDER = ['main', 'major', 'minor', 'festive', 'character', 'other'];
+const KIND_PLURAL = { major: 'Major events', minor: 'Minor events', festive: 'Festive events', character: 'Character stories', main: 'Main story', other: 'Other stories' };
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SC = window.SyncCore;
 
@@ -536,12 +537,12 @@ function showLibrary() {
   renderLibrary();
 }
 function renderLibrary() {
-  const evs = [...CATALOG.events].sort((a, b) => b.id - a.id);
+  const evs = [...CATALOG.events].sort((a, b) => a.id - b.id);   // the game numbers stories in release order
   const kinds = KIND_ORDER.filter(k => evs.some(e => e.kind === k));
   const fl = $('filters');
   fl.hidden = kinds.length < 2;
   if (!fl.hidden) {
-    fl.innerHTML = [['all', 'All'], ...kinds.map(k => [k, KIND_LABEL[k] + 's'])]
+    fl.innerHTML = [['all', 'All'], ...kinds.map(k => [k, KIND_PLURAL[k]])]
       .map(([k, label]) => `<button type="button" data-k="${k}" aria-pressed="${filter === k}">${esc(label)}</button>`).join('');
   }
   const shown = evs.filter(e => filter === 'all' || e.kind === filter);

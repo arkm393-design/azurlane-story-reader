@@ -5,9 +5,12 @@
   "bg_cccpv2_3": "bg/bg_cccpv2_3.webp",
   "bg_cccpv2_9": "bg/bg_cccpv2_9.webp",
   "bg_daofeng_4": "bg/bg_daofeng_4.webp",
+  "bg_map_northsea": "bg/bg_map_northsea.webp",
   "bg_map_tianchen2": "bg/bg_map_tianchen2.webp",
   "bg_map_tiancheng": "bg/bg_map_tiancheng.webp",
   "bg_port_chongdong": "bg/bg_port_chongdong.webp",
+  "bg_story_1": "bg/bg_story_1.webp",
+  "bg_story_3": "bg/bg_story_3.webp",
   "bg_story_task": "bg/bg_story_task.webp",
   "bg_story_tiancheng1": "bg/bg_story_tiancheng1.webp",
   "bg_story_tiancheng2": "bg/bg_story_tiancheng2.webp",
@@ -29,6 +32,7 @@
   "star_level_bg_597": "bg/star_level_bg_597.webp"
  },
  "bgm": {
+  "battle-1": "m/battle-1.mp4",
   "battle-2": "m/battle-2.mp4",
   "battle-boss-tiancheng": "m/battle-boss-tiancheng.mp4",
   "battle-eagleunion": "m/battle-eagleunion.mp4",
@@ -37,6 +41,7 @@
   "bsm-2": "m/bsm-2.mp4",
   "map-longgong": "m/map-longgong.mp4",
   "nagato-map": "m/nagato-map.mp4",
+  "story-5": "m/story-5.mp4",
   "story-6": "m/story-6.mp4",
   "story-amagi-up": "m/story-amagi-up.mp4",
   "story-antix-past": "m/story-antix-past.mp4",
@@ -88,6 +93,24 @@
     "4"
    ],
    "h": 1208,
+   "w": 1400
+  },
+  "bisimai": {
+   "av": [
+    "0"
+   ],
+   "face": {
+    "h": 0.0808,
+    "w": 0.07714285714285714,
+    "x": 0.46785714285714286,
+    "y": 0.1384
+   },
+   "fit": {
+    "cc": 0.9925,
+    "mad": 3.98
+   },
+   "fx": [],
+   "h": 1250,
    "w": 1400
   },
   "canglong": {
@@ -380,6 +403,24 @@
     "2"
    ],
    "h": 866,
+   "w": 1400
+  },
+  "hude": {
+   "av": [
+    "0"
+   ],
+   "face": {
+    "h": 0.09566250742721331,
+    "w": 0.08203125,
+    "x": 0.466796875,
+    "y": 0.13606654783125371
+   },
+   "fit": {
+    "cc": 0.9903,
+    "mad": 2.6
+   },
+   "fx": [],
+   "h": 1150,
    "w": 1400
   },
   "jiahe": {
@@ -732,6 +773,40 @@
    "h": 780,
    "w": 1009
   },
+  "nuofuke": {
+   "av": [
+    "0"
+   ],
+   "face": null,
+   "fit": null,
+   "frame": {
+    "h": 0.22594625176803396,
+    "w": 0.22285714285714286,
+    "x": 0.3157142857142857,
+    "y": 0.1289052333804809
+   },
+   "fx": [],
+   "h": 1010,
+   "w": 1024
+  },
+  "ougen": {
+   "av": [
+    "0"
+   ],
+   "face": {
+    "h": 0.1384180790960452,
+    "w": 0.1188934667451442,
+    "x": 0.32136550912301354,
+    "y": 0.09533898305084745
+   },
+   "fit": {
+    "cc": 0.9697,
+    "mad": 7.03
+   },
+   "fx": [],
+   "h": 1167,
+   "w": 1400
+  },
   "qiaozhiwushi": {
    "av": [
     "0",
@@ -820,6 +895,39 @@
    "fx": [],
    "h": 993,
    "w": 1024
+  },
+  "safuke": {
+   "av": [
+    "0",
+    "4",
+    "5",
+    "9",
+    "10",
+    "11",
+    "13",
+    "14"
+   ],
+   "face": {
+    "h": 0.12035225048923678,
+    "w": 0.21465968586387435,
+    "x": 0.5846422338568935,
+    "y": 0.16634050880626222
+   },
+   "fit": {
+    "cc": 0.964,
+    "mad": 8.65
+   },
+   "fx": [
+    "10",
+    "11",
+    "13",
+    "14",
+    "4",
+    "5",
+    "9"
+   ],
+   "h": 1022,
+   "w": 573
   },
   "silverfox": {
    "av": [
@@ -979,6 +1087,24 @@
    },
    "fx": [],
    "h": 1133,
+   "w": 1400
+  },
+  "weiershiqinwang": {
+   "av": [
+    "0"
+   ],
+   "face": {
+    "h": 0.06912712360867018,
+    "w": 0.0556640625,
+    "x": 0.47802734375,
+    "y": 0.09431751611013474
+   },
+   "fit": {
+    "cc": 0.9677,
+    "mad": 4.07
+   },
+   "fx": [],
+   "h": 1167,
    "w": 1400
   },
   "xinnong": {

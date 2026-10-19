@@ -107,9 +107,13 @@ def run():
         a.goto("http://reader.test/")
         a.wait_for_selector(".ev-card")
         cards = a.locator(".ev-card")
-        check(cards.count() == 2, "library lists both stories")
+        catalog = json.load(open(os.path.join(SITE, "data/catalog.json")))["events"]
+        check(cards.count() == len(catalog), f"library lists all {len(catalog)} stories")
+        ids = [int(cards.nth(i).get_attribute("data-id")) for i in range(cards.count())]
+        check(ids == sorted(ids), "stories are listed oldest first")
         check(a.locator(".made").is_visible() and "Claude" in a.locator(".made").inner_text(), "AI disclosure is visible on the library")
-        check(a.locator("#filters").is_hidden(), "no filter row when every story is the same kind")
+        kinds = {e["kind"] for e in catalog}
+        check(a.locator("#filters").is_hidden() == (len(kinds) < 2), "filter row shows only when stories differ in kind")
         a.wait_for_timeout(500)
         a.screenshot(path=f"{OUT}/1-library.png")
         a.click("#aboutBtn")

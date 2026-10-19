@@ -1,4 +1,37 @@
 {
+ "1": {
+  "bg": [
+   "bg_map_northsea",
+   "bg_story_1",
+   "bg_story_3"
+  ],
+  "bgm": [
+   "battle-1",
+   "story-5"
+  ],
+  "faces": {
+   "safuke": [
+    "4",
+    "5",
+    "9",
+    "10",
+    "11",
+    "13",
+    "14"
+   ]
+  },
+  "paint": [
+   "bisimai",
+   "hude",
+   "nuofuke",
+   "ougen",
+   "safuke",
+   "unknown1",
+   "unknown2",
+   "weiershiqinwang"
+  ],
+  "se": []
+ },
  "148": {
   "bg": [
    "bg_map_tianchen2",

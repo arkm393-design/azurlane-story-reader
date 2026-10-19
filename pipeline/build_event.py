@@ -4,6 +4,8 @@ compact reader data.
 usage: python3 -I build_event.py <AzurLaneData EN dir with *.json> <group_id> <out.json> [overrides.json]
 
 overrides.json (optional, per event): {"map_bg": {"<game map bg name>": "<AzurAssets bg name>"}}
+overrides "battle_scene": {"bg", "bgm"} backdrop + music for in-battle dialogue (story mode 2) with no background;
+  "story_scene": {"<story id>": {"bg", "bgm"}} the same for one story.
 Chapters that open without a background are cutscenes over the battle map; they get
 their stage's map background (stage found via the game's stage and map tables).
 
@@ -298,10 +300,20 @@ for mid in group["memories"]:
     first_bg = next((n for n, l in enumerate(lines) if l.get("bg")), None)
     first_say = next((n for n, l in enumerate(lines) if l["k"] == "say"), None)
     if first_say is not None and (first_bg is None or first_bg > first_say):
-        mbg = chapter_map_bg(key, chapter_label(cond))
+        # No backdrop of its own: an in-map cutscene (the battle map is the backdrop), or dialogue that plays
+        # over a battle (story mode 2), which overrides can give a scene: {"battle_scene": {"bg", "bgm"}},
+        # or per story {"story_scene": {"s001": {"bg", "bgm"}}}.
+        bscene = (OVR.get("story_scene") or {}).get(key.lower()) or {}
+        if not bscene and story[key].get("mode") == 2:
+            bscene = OVR.get("battle_scene") or {}
+        mbg = bscene.get("bg") or chapter_map_bg(key, chapter_label(cond))
         if mbg:
-            lines[0]["bg"] = mbg          # an in-map cutscene: the battle map is the backdrop
+            lines[0]["bg"] = mbg
             need_bg.add(mbg)
+        if bscene.get("bgm") and not any(l.get("bgm") or l.get("stop") for l in lines[:first_say + 1]):
+            lines[0]["bgm"] = bscene["bgm"]
+            need_bgm.add(bscene["bgm"])
+            prev_bgm = bscene["bgm"]
     out["chapters"].append({
         "id": key,
         "title": resolve_codes(mem.get("title", "")).strip(),
@@ -313,6 +325,9 @@ for mid in group["memories"]:
 generic = ("bg_story_task", "bg_story_room", "bg_story_school", "bg_port")
 ranked = sorted(bg_use.items(), key=lambda kv: -kv[1])
 out["cover"] = next((b for b, _ in ranked if not b.startswith(generic)), ranked[0][0] if ranked else None)
+if OVR.get("cover"):   # overrides {"cover": "<bg name>"}: the art for the library card and story page
+    out["cover"] = OVR["cover"].lower()
+    need_bg.add(out["cover"])
 out["need"] = {
     "se": sorted(need_se),
     "bg": sorted(need_bg),
